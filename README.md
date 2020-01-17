@@ -5,12 +5,18 @@ This is designed to run on the OpenMV M7
 
 The pipeline: 
 
-Convert to HSV colorspace 
-Threshold HSV
+Convert to LAB colorspace 
+Threshold LAB
 Erosion 
-Dilation 
-Dilation
-Erosion
-EDT (Euclidean Distance Transform)
-Pass into step function
-Hough Circle Detection
+Blob Detection 
+-limit to circles
+If multiple in Frame, use largest
+
+Outputs: 
+Image: Red circle indicates ball
+Onboard LED: 
+-off=no target
+-red=left side target
+-green=right side target
+
+Outputs x coord of target over I2C
