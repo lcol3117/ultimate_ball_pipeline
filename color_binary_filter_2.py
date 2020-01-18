@@ -3,7 +3,7 @@
 # This script shows off the binary image filter. You may pass binary any
 # number of thresholds to segment the image by.
 
-import sensor, image, time, pyb
+import sensor, image, time, pyb, math
 from pyb import *
 
 sensor.reset()
@@ -24,7 +24,8 @@ i2c = I2C(2)                         # create on bus 2
 i2c.init(I2C.SLAVE, addr=0x3A)       # init as a slave with given address
 
 # Use the Tools -> Machine Vision -> Threshold Edtor to pick better thresholds.
-red_threshold = (0, 100, -128, 7, 35, 127) # L A B threshold
+red_threshold_orig = (81, 100, -30, 0, -2, 127) # L A B threshold bad here just in case
+red_threshold = (55, 100, -128, 13, 22, 127) #LAB
 
 while(True):
 
@@ -34,23 +35,30 @@ while(True):
     img.binary([red_threshold]) #Threshold it
 
     img.erode(5,4) #Remove noise
-    img.dilate(2,2) #Fill in logo
+    img.dilate(1,1) #Fill in logo
     img.erode(2,2) #Account for dilation
 
     cwmax = 0
     blobs = img.find_blobs([(100,255),(100,255),(100,255)])
     aspect_ratio_ok = blobs[:]
+    solidity_ok = blobs[:]
     for i in range(0,len(blobs)):
         if(abs(blobs[i].w()-blobs[i].h()) > (blobs[i].w()/4)): #Aspect Ratio Test
             aspect_ratio_ok[i] = 0
         else:
             aspect_ratio_ok[i] = 1
+        print("Slidty:")
+        print(abs(blobs[i].pixels()-(math.pi*blobs[i].w()*blobs[i].h())))
+        if (abs(blobs[i].pixels()-(math.pi*blobs[i].w()*blobs[i].h())) > (blobs[i].w()*2)): #Solidity Test
+            solidity_ok[i] = 1
+        else:
+            solidity_ok[i] = 1
     try:
         cmax = blobs[0]
     except:
         cmax = -1
     for c in range(0,len(blobs)):
-        if (aspect_ratio_ok[c] == 1): #Only look through good aspect ratios
+        if ((aspect_ratio_ok[c] == 1) and (solidity_ok[c] == 1)): #Only look through good aspect ratios
             if (int(blobs[c].w()) > int(cwmax)): #Target largest object with ok aspect ratio
                 cwmax=blobs[c].w()
                 cmax=blobs[c]
