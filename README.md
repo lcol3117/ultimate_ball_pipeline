@@ -8,9 +8,12 @@ The pipeline:
 Convert to LAB colorspace 
 Threshold LAB
 Erosion 
+Dilation
+Erosion
 Blob Detection 
 -limit to circles
 If multiple in Frame, use largest
+output data
 
 Outputs: 
 Image: Red circle indicates ball
