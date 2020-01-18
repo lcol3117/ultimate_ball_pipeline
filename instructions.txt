@@ -1,0 +1,11 @@
+Step 1: Clone or Download
+
+Step 2: Open OpenMV IDE
+
+Step 3: File -> Open
+
+Step 4: Click on Downloaded File
+
+Step 5: Connect and Run
+
+Step 6: Tools -> Save Open Script to OpenMV Cam
