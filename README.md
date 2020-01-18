@@ -22,4 +22,4 @@ Onboard LED:
 -red=left side target
 -green=right side target
 
-Outputs x coord of target over I2C
+Outputs x coord of target over I2C, or 0b11111111 (int 511) if no targets were found
